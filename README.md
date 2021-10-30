@@ -59,7 +59,7 @@ class-assist:
 ```
 
 1. className 为需要修改的class全路径
-2. 注解写在 class 上 示例
+2. 注解写在 class 上, 示例:
 
 ```aspectj
 
