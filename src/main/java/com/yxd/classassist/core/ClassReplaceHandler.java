@@ -73,13 +73,7 @@ class ClassReplaceHandler {
                 CtClass[] params = new CtClass[paramsNameSet.size()];
                 final Object[] paramsNameArr = paramsNameSet.toArray();
                 for (int i = 0; i < paramsNameArr.length; i++) {
-                    String paramName = (String) paramsNameArr[i];
-
-                    body = body.replaceAll(paramName + replaceReg, "\\$" + (i + 1) + "$1");
-                    final Class paramType = paramsType.get(paramName);
-                    final String paramTypeStr = paramType.getTypeName();
-                    final CtClass paramTypeClass = classPool.getCtClass(paramTypeStr);
-                    params[i] = paramTypeClass;
+                    body = replaceMethodBody(classPool, paramsType, body, params, paramsNameArr, i);
                 }
                 final CtClass ctClass1 = classPool.getCtClass(returnType.getTypeName());
                 CtMethod ctMethod = new CtMethod(ctClass1, name, params, ctClass);
@@ -102,17 +96,22 @@ class ClassReplaceHandler {
                 final Set<String> paramsNameSet = paramsType.keySet();
                 final Object[] paramsNameArr = paramsNameSet.toArray();
                 for (int i = 0; i < size; i++) {
-                    String paramName = (String) paramsNameArr[i];
-                    body = body.replaceAll(paramName + replaceReg, "\\$" + (i + 1) + "$1");
-                    final Class paramType = paramsType.get(paramName);
-                    final String paramTypeStr = paramType.getTypeName();
-                    final CtClass paramTypeClass = classPool.getCtClass(paramTypeStr);
-                    params[i] = paramTypeClass;
+                    body = replaceMethodBody(classPool, paramsType, body, params, paramsNameArr, i);
                 }
                 CtMethod method = ctClass.getDeclaredMethod(name, params);
                 method.setBody(body);
             }
         }
+    }
+
+    private String replaceMethodBody(ClassPool classPool, LinkedHashMap<String, Class> paramsType, String body, CtClass[] params, Object[] paramsNameArr, int i) throws NotFoundException {
+        String paramName = (String) paramsNameArr[i];
+        body = body.replaceAll(paramName + replaceReg, "\\$" + (i + 1) + "$1");
+        final Class paramType = paramsType.get(paramName);
+        final String paramTypeStr = paramType.getTypeName();
+        final CtClass paramTypeClass = classPool.getCtClass(paramTypeStr);
+        params[i] = paramTypeClass;
+        return body;
     }
 
 }
