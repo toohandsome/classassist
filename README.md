@@ -70,7 +70,7 @@ public class TestPatch implements IClassPatch {
 
 ## 4. 实现 IClassPatch 接口
 
-IClassPatch 中有四个需要重写的方法
+IClassPatch 中目前有四个需要重写的方法，后期会增加，以支持注解等功能
 
 #### getEditMethodList
 

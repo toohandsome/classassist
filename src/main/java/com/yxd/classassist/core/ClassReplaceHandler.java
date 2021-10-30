@@ -23,6 +23,8 @@ class ClassReplaceHandler {
         add("yml");
     }};
 
+    String replaceReg = "([\\.|\\s|\\|;|,)])";
+
     void handler(ClassPool classPool, IClassPatch classPatch, CtClass ctClass) {
         try {
             // 导包
@@ -63,19 +65,21 @@ class ClassReplaceHandler {
         if (addMethodList != null && !addMethodList.isEmpty()) {
             for (MethodMeta methodMeta : addMethodList) {
                 final String name = methodMeta.getName();
-                final String body = methodMeta.getBody();
+                String body = "{" + methodMeta.getBody() + "}";
                 final Class returnType = methodMeta.getReturnType();
                 final LinkedHashMap<String, Class> paramsType = methodMeta.getParams();
 
-                final Set<String> strings = paramsType.keySet();
-                CtClass[] params = new CtClass[strings.size()];
-                final Object[] objects = strings.toArray();
-                for (int i = 0; i < objects.length; i++) {
-                    String param = (String) objects[i];
-                    final Class aClass = paramsType.get(param);
-                    final String simpleName = aClass.getTypeName();
-                    final CtClass ctClass1 = classPool.getCtClass(simpleName);
-                    params[i] = ctClass1;
+                final Set<String> paramsNameSet = paramsType.keySet();
+                CtClass[] params = new CtClass[paramsNameSet.size()];
+                final Object[] paramsNameArr = paramsNameSet.toArray();
+                for (int i = 0; i < paramsNameArr.length; i++) {
+                    String paramName = (String) paramsNameArr[i];
+
+                    body = body.replaceAll(paramName + replaceReg, "\\$" + (i + 1) + "$1");
+                    final Class paramType = paramsType.get(paramName);
+                    final String paramTypeStr = paramType.getTypeName();
+                    final CtClass paramTypeClass = classPool.getCtClass(paramTypeStr);
+                    params[i] = paramTypeClass;
                 }
                 final CtClass ctClass1 = classPool.getCtClass(returnType.getTypeName());
                 CtMethod ctMethod = new CtMethod(ctClass1, name, params, ctClass);
@@ -91,18 +95,19 @@ class ClassReplaceHandler {
         if (editMethodList != null && !editMethodList.isEmpty()) {
             for (MethodMeta methodMeta : editMethodList) {
                 final LinkedHashMap<String, Class> paramsType = methodMeta.getParams();
-                final String body = methodMeta.getBody();
+                String body = "{" + methodMeta.getBody() + "}";
                 final String name = methodMeta.getName();
                 final int size = paramsType.size();
                 CtClass[] params = new CtClass[size];
-                final Set<String> strings = paramsType.keySet();
-                final Object[] objects = strings.toArray();
+                final Set<String> paramsNameSet = paramsType.keySet();
+                final Object[] paramsNameArr = paramsNameSet.toArray();
                 for (int i = 0; i < size; i++) {
-                    String param = (String) objects[i];
-                    final Class aClass = paramsType.get(param);
-                    final String simpleName = aClass.getTypeName();
-                    final CtClass ctClass1 = classPool.getCtClass(simpleName);
-                    params[i] = ctClass1;
+                    String paramName = (String) paramsNameArr[i];
+                    body = body.replaceAll(paramName + replaceReg, "\\$" + (i + 1) + "$1");
+                    final Class paramType = paramsType.get(paramName);
+                    final String paramTypeStr = paramType.getTypeName();
+                    final CtClass paramTypeClass = classPool.getCtClass(paramTypeStr);
+                    params[i] = paramTypeClass;
                 }
                 CtMethod method = ctClass.getDeclaredMethod(name, params);
                 method.setBody(body);
