@@ -1,4 +1,4 @@
-package com.yxd.classassist.core;
+package io.github.toohandsome.classassist.core;
 
 import javassist.Modifier;
 import lombok.Data;
@@ -16,7 +16,7 @@ public class MethodMeta {
 	private boolean isStatic;
 	private String name;
 	private String body;
-	private LinkedHashMap<String, Class> params;
+	private LinkedHashMap<String, Class> params = new LinkedHashMap<>();
 	private Class returnType;
 
 }

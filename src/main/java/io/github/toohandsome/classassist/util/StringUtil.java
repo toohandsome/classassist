@@ -1,4 +1,4 @@
-package com.yxd.classassist.util;
+package io.github.toohandsome.classassist.util;
 
 import org.springframework.util.StringUtils;
 

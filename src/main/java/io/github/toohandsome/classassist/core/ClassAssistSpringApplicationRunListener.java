@@ -1,8 +1,8 @@
-package com.yxd.classassist.core;
+package io.github.toohandsome.classassist.core;
 
 import cn.hutool.core.util.ClassUtil;
-import com.yxd.classassist.annotation.ClassAssist;
-import com.yxd.classassist.util.StringUtil;
+import io.github.toohandsome.classassist.annotation.ClassAssist;
+import io.github.toohandsome.classassist.util.StringUtil;
 import javassist.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
@@ -40,43 +40,46 @@ public class ClassAssistSpringApplicationRunListener implements SpringApplicatio
         final ClassLoader classLoader = this.getClass().getClassLoader();
         ClassAssistClassLoad classAssistClassLoad = new ClassAssistClassLoad(classLoader);
         Thread.currentThread().setContextClassLoader(classAssistClassLoad);
+
         ClassPool classPool = new ClassPool(true);
         classPool.appendClassPath(new LoaderClassPath(classLoader));
         ClassReplaceHandler classReplaceHandler = new ClassReplaceHandler();
         String currentClassName = "";
+        String scanPath = "";
         try {
-            String scanPath = getScanPath();
-
-            if (!StringUtil.isNotEmpty(scanPath)) {
-                System.out.println("class-assist not found scanPath , end of run");
-                return;
-            }
-            Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(scanPath, ClassAssist.class);
-            for (Class<?> class1 : classSet) {
+            scanPath = getScanPath();
+        } catch (IOException ioException) {
+            System.err.println("class-assist  ===  getScanPath error . " + ioException.getMessage());
+            return;
+        }
+        if (!StringUtil.isNotEmpty(scanPath)) {
+            System.out.println("class-assist  ===  not found scanPath , end of run");
+            return;
+        }
+        Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(scanPath, ClassAssist.class);
+        for (Class<?> class1 : classSet) {
+            try {
                 final ClassAssist annotation = class1.getAnnotation(ClassAssist.class);
                 final String className = annotation.className();
-                System.out.println("class-assist found class " + class1.getTypeName());
+                System.out.println("class-assist  ===  found class " + class1.getTypeName());
                 currentClassName = class1.getTypeName();
                 CtClass ctClass = classPool.getCtClass(className);
                 final IClassPatch classPatch = (IClassPatch) class1.newInstance();
                 classReplaceHandler.handler(classPool, classPatch, ctClass);
                 ctClass.toClass(classLoader, ctClass.getClass().getProtectionDomain());
                 ctClass.detach();
+            } catch (NotFoundException notFoundException) {
+                System.err.println("class-assist  ===  " + currentClassName + " not found , make sure class is exist.");
+            } catch (InstantiationException instantiationException) {
+                System.err.println("class-assist  ===  " + currentClassName + " instantiationException . " + instantiationException.getMessage());
+            } catch (IllegalAccessException illegalAccessException) {
+                System.err.println("class-assist  ===  " + currentClassName + " illegalAccessException . " + illegalAccessException.getMessage());
+            } catch (CannotCompileException cannotCompileException) {
+                System.err.println("class-assist  ===  " + currentClassName + " cannotCompileException . " + cannotCompileException.getMessage());
             }
-
-            System.out.println(Thread.currentThread().getName() + "  ===  " + Thread.currentThread().getContextClassLoader() + " ===   class-assist run success!");
-
-        } catch (NotFoundException notFoundException) {
-            System.err.println("class-assist === " + currentClassName + " not found , make sure class is exist.");
-        } catch (InstantiationException instantiationException) {
-            System.err.println("class-assist === " + currentClassName + " instantiationException . " + instantiationException.getMessage());
-        } catch (IllegalAccessException illegalAccessException) {
-            System.err.println("class-assist === " + currentClassName + " illegalAccessException . " + illegalAccessException.getMessage());
-        } catch (CannotCompileException cannotCompileException) {
-            System.err.println("class-assist === " + currentClassName + " cannotCompileException . " + cannotCompileException.getMessage());
-        } catch (IOException ioException) {
-            System.err.println("class-assist ===  getScanPath error . " + ioException.getMessage());
         }
+
+        System.out.println(Thread.currentThread().getName() + "  ===  " + Thread.currentThread().getContextClassLoader() + " ===   class-assist run success!");
     }
 
 
@@ -105,7 +108,7 @@ public class ClassAssistSpringApplicationRunListener implements SpringApplicatio
                     scanPath = scanPath1.get("scan") + "";
                 }
                 if (StringUtil.isNotEmpty(scanPath)) {
-                    System.out.println("class-assist scanPath: " + scanPath);
+                    System.out.println("class-assist  ===  scanPath: " + scanPath);
                     findit = true;
                     break;
                 }

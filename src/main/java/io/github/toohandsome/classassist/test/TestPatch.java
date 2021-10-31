@@ -1,8 +1,8 @@
 //package com.yxd.classassist.test;
 //
-//import com.yxd.classassist.annotation.ClassAssist;
-//import com.yxd.classassist.core.IClassPatch;
-//import com.yxd.classassist.core.MethodMeta;
+//import ClassAssist;
+//import IClassPatch;
+//import MethodMeta;
 //
 //import java.util.ArrayList;
 //import java.util.LinkedHashMap;
@@ -11,7 +11,7 @@
 ///**
 // * @author hudcan
 // */
-//@ClassAssist(className = "com.yxd.classassist.test.TestApp")
+//@ClassAssist(className = "TestApp")
 //public class TestPatch implements IClassPatch {
 //
 //

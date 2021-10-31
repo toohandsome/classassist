@@ -1,4 +1,4 @@
-package com.yxd.classassist.test;
+package io.github.toohandsome.classassist.test;
 
 
 /**

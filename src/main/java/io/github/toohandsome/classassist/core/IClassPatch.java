@@ -1,4 +1,4 @@
-package com.yxd.classassist.core;
+package io.github.toohandsome.classassist.core;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,2 +1,2 @@
 org.springframework.boot.SpringApplicationRunListener=\
-com.yxd.classassist.core.ClassAssistSpringApplicationRunListener
+io.github.toohandsome.classassist.core.ClassAssistSpringApplicationRunListener

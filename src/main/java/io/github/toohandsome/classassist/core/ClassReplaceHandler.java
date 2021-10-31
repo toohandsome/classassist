@@ -1,5 +1,6 @@
-package com.yxd.classassist.core;
+package io.github.toohandsome.classassist.core;
 
+import io.github.toohandsome.classassist.util.JavaForm;
 import javassist.*;
 
 import java.util.ArrayList;
@@ -78,7 +79,9 @@ class ClassReplaceHandler {
                 final CtClass ctClass1 = classPool.getCtClass(returnType.getTypeName());
                 CtMethod ctMethod = new CtMethod(ctClass1, name, params, ctClass);
                 ctClass.addMethod(ctMethod);
-                ctMethod.setBody(body);
+                String bodyStr = JavaForm.formJava(body);
+                System.out.println("class-assist  ===  addMethodBodyStr: \r\n" + bodyStr);
+                ctMethod.setBody(bodyStr);
                 ctMethod.setModifiers(Modifier.PUBLIC);
                 ctClass.setModifiers(ctClass.getModifiers() & ~Modifier.ABSTRACT);
             }
@@ -99,7 +102,9 @@ class ClassReplaceHandler {
                     body = replaceMethodBody(classPool, paramsType, body, params, paramsNameArr, i);
                 }
                 CtMethod method = ctClass.getDeclaredMethod(name, params);
-                method.setBody(body);
+                String bodyStr = JavaForm.formJava(body);
+                System.out.println("class-assist  ===  editMethodBodyStr: \r\n" + bodyStr);
+                method.setBody(bodyStr);
             }
         }
     }

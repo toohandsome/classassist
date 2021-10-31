@@ -1,8 +1,8 @@
 //package com.yxd.classassist.mp;
 //
-//import com.yxd.classassist.annotation.ClassAssist;
-//import com.yxd.classassist.core.IClassPatch;
-//import com.yxd.classassist.core.MethodMeta;
+//import ClassAssist;
+//import IClassPatch;
+//import MethodMeta;
 //
 //import java.util.ArrayList;
 //import java.util.LinkedHashMap;

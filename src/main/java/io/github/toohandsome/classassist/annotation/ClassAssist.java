@@ -1,4 +1,4 @@
-package com.yxd.classassist.annotation;
+package io.github.toohandsome.classassist.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
