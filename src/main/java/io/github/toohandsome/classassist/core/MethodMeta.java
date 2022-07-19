@@ -18,5 +18,8 @@ public class MethodMeta {
 	private String body;
 	private LinkedHashMap<String, Class> params = new LinkedHashMap<>();
 	private Class returnType;
+	private String insertBefore;
+	private String insertAfter;
+	private Object retValue;
 
 }

@@ -2,6 +2,7 @@ package io.github.toohandsome.classassist.core;
 
 import io.github.toohandsome.classassist.util.JavaForm;
 import javassist.*;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -103,8 +104,18 @@ class ClassReplaceHandler {
                 }
                 CtMethod method = ctClass.getDeclaredMethod(name, params);
                 String bodyStr = JavaForm.formJava(body);
+                System.out.println("class-assist  ===  insertBefore: \r\n" + methodMeta.getInsertBefore());
                 System.out.println("class-assist  ===  editMethodBodyStr: \r\n" + bodyStr);
-                method.setBody(bodyStr);
+                System.out.println("class-assist  ===  insertAfter: \r\n" + methodMeta.getInsertAfter());
+                if (StringUtils.hasText(methodMeta.getBody())) {
+                    method.setBody(bodyStr);
+                }
+                if (StringUtils.hasText(methodMeta.getInsertBefore())) {
+                    method.insertBefore(methodMeta.getInsertBefore());
+                }
+                if (StringUtils.hasText(methodMeta.getInsertAfter())) {
+                    method.insertAfter(methodMeta.getInsertAfter());
+                }
             }
         }
     }
