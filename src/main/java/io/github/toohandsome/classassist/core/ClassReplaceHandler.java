@@ -1,6 +1,6 @@
 package io.github.toohandsome.classassist.core;
 
-import io.github.toohandsome.classassist.util.JavaForm;
+import io.github.toohandsome.classassist.util.JavaFormat;
 import javassist.*;
 import org.springframework.util.StringUtils;
 
@@ -80,7 +80,7 @@ class ClassReplaceHandler {
                 final CtClass ctClass1 = classPool.getCtClass(returnType.getTypeName());
                 CtMethod ctMethod = new CtMethod(ctClass1, name, params, ctClass);
                 ctClass.addMethod(ctMethod);
-                String bodyStr = JavaForm.formJava(body);
+                String bodyStr = JavaFormat.formJava(body);
                 System.out.println("class-assist  ===  addMethodBodyStr: \r\n" + bodyStr);
                 ctMethod.setBody(bodyStr);
                 ctMethod.setModifiers(Modifier.PUBLIC);
@@ -103,7 +103,7 @@ class ClassReplaceHandler {
                     body = replaceMethodBody(classPool, paramsType, body, params, paramsNameArr, i);
                 }
                 CtMethod method = ctClass.getDeclaredMethod(name, params);
-                String bodyStr = JavaForm.formJava(body);
+                String bodyStr = JavaFormat.formJava(body);
                 System.out.println("class-assist  ===  insertBefore: \r\n" + methodMeta.getInsertBefore());
                 System.out.println("class-assist  ===  editMethodBodyStr: \r\n" + bodyStr);
                 System.out.println("class-assist  ===  insertAfter: \r\n" + methodMeta.getInsertAfter());
