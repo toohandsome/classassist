@@ -81,7 +81,7 @@ class ClassReplaceHandler {
                 CtMethod ctMethod = new CtMethod(ctClass1, name, params, ctClass);
                 ctClass.addMethod(ctMethod);
                 String bodyStr = JavaFormat.formJava(body);
-                System.out.println("class-assist  ===  addMethodBodyStr: \r\n" + bodyStr);
+                System.out.println("class-assist  ===  " + "methodName: " + name + "\t addMethodBodyStr : \r\n" + bodyStr);
                 ctMethod.setBody(bodyStr);
                 ctMethod.setModifiers(Modifier.PUBLIC);
                 ctClass.setModifiers(ctClass.getModifiers() & ~Modifier.ABSTRACT);
@@ -104,16 +104,17 @@ class ClassReplaceHandler {
                 }
                 CtMethod method = ctClass.getDeclaredMethod(name, params);
                 String bodyStr = JavaFormat.formJava(body);
-                System.out.println("class-assist  ===  insertBefore: \r\n" + methodMeta.getInsertBefore());
-                System.out.println("class-assist  ===  editMethodBodyStr: \r\n" + bodyStr);
-                System.out.println("class-assist  ===  insertAfter: \r\n" + methodMeta.getInsertAfter());
+
                 if (StringUtils.hasText(methodMeta.getBody())) {
                     method.setBody(bodyStr);
+                    System.out.println("class-assist  ===  " + "methodName: " + name + "\t editMethodBodyStr: \r\n" + bodyStr);
                 }
                 if (StringUtils.hasText(methodMeta.getInsertBefore())) {
+                    System.out.println("class-assist  ===  " + "methodName: " + name + "\t insertBefore: \r\n" + methodMeta.getInsertBefore());
                     method.insertBefore(methodMeta.getInsertBefore());
                 }
                 if (StringUtils.hasText(methodMeta.getInsertAfter())) {
+                    System.out.println("class-assist  ===  " + "methodName: " + name + "\t insertAfter: \r\n" + methodMeta.getInsertAfter());
                     method.insertAfter(methodMeta.getInsertAfter());
                 }
             }

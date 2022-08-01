@@ -12,4 +12,8 @@ public class TestApp {
         System.out.println(abc);
     }
 
+    public String retString(){
+       return "retString";
+    }
+
 }
