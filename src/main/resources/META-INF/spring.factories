@@ -1,4 +1,2 @@
-#org.springframework.boot.SpringApplicationRunListener=\
-#  io.github.toohandsome.classassist.core.ClassAssistSpringApplicationRunListener
 org.springframework.context.ApplicationContextInitializer=\
   io.github.toohandsome.classassist.core.ClassAssistApplicationContextInitializer

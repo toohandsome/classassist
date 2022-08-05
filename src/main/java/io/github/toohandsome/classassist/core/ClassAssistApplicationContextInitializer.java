@@ -1,8 +1,9 @@
 package io.github.toohandsome.classassist.core;
 
-import cn.hutool.core.util.ClassUtil;
+//import cn.hutool.core.util.ClassUtil;
 import io.github.toohandsome.classassist.annotation.ClassAssist;
 import io.github.toohandsome.classassist.spi.ScanPath;
+import io.github.toohandsome.classassist.util.ClassUtil;
 import io.github.toohandsome.classassist.util.StringUtil;
 import javassist.*;
 import org.springframework.boot.SpringApplication;
@@ -53,7 +54,9 @@ public class ClassAssistApplicationContextInitializer implements ApplicationCont
                     allPath.addAll(scanPath.getScanPath());
                 }
             } catch (Exception e) {
-                System.err.println("class-assist  ===  getScanPath error . " + " scanPathClass:" + o.getClass().getName() + ", error: " + e.getMessage());
+                System.err.println("class-assist  ===  getScanPath error . " + " scanPathClass:" + o.getClass().getName()
+                        + ", error: " + e.getMessage()
+                        + ", stackTrace: " + e.getStackTrace()[0] + "\t" + e.getStackTrace()[1]);
             }
         }
 
@@ -64,7 +67,7 @@ public class ClassAssistApplicationContextInitializer implements ApplicationCont
         }
 
         for (String scanPath : allPath) {
-            Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(scanPath, ClassAssist.class);
+            List<Class<?>> classSet = ClassUtil.getClassListByAnnotation(scanPath, ClassAssist.class);
             for (Class<?> class1 : classSet) {
                 try {
                     final ClassAssist annotation = class1.getAnnotation(ClassAssist.class);
