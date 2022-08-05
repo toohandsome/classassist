@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
  * @author hudcan
  */
 @Configuration
-@ComponentScan(value = "com.yxd.classassist")
+//@ComponentScan(value = "com.yxd.classassist")
 public class ClassAssistConfig {
 
 

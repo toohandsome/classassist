@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-public class DefaultScanPath implements ScanPath{
+public class DefaultScanPath implements ScanPath {
 
     List<String> configName = new ArrayList<String>() {{
         add("bootstrap");
@@ -43,8 +43,11 @@ public class DefaultScanPath implements ScanPath{
                         continue;
                     }
                     Map<String, Map<String, Object>> properties = yaml.loadAs(in, HashMap.class);
-                    Map<String, Object> scanPath1 = properties.get("class-assist");
-                    scanPath = scanPath1.get("scan") + "";
+                    Map<String, Object> scanPathMap = properties.get("class-assist");
+                    if (scanPathMap != null) {
+                        scanPath = scanPathMap.get("scan") + "";
+                    }
+
                 }
                 if (StringUtil.isNotEmpty(scanPath)) {
                     System.out.println("class-assist  ===  scanPath: " + scanPath);
@@ -56,9 +59,12 @@ public class DefaultScanPath implements ScanPath{
                 break;
             }
         }
-        return Arrays.asList( scanPath.split(","));
+        if (!findit) {
+            System.err.println("class-assist  ===  " + this.getClass().getName() + " can't find scanPath");
+            return new ArrayList<>();
+        }
+        return Arrays.asList(scanPath.split(","));
     }
-
 
 
 }

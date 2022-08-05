@@ -32,30 +32,32 @@ public class ClassAssistApplicationContextInitializer implements ApplicationCont
         }
         isFirst = false;
 
-//        final ClassLoader classLoader = this.getClass().getClassLoader();
-        ClassAssistClassLoad classAssistClassLoad = new ClassAssistClassLoad(String.class.getClassLoader());
-        Thread.currentThread().setContextClassLoader(classAssistClassLoad);
+        final ClassLoader classLoader = this.getClass().getClassLoader();
+//        ClassAssistClassLoad classAssistClassLoad = new ClassAssistClassLoad(String.class.getClassLoader());
+//        Thread.currentThread().setContextClassLoader(classAssistClassLoad);
 
         ClassPool classPool = new ClassPool(true);
-        classPool.appendClassPath(new LoaderClassPath(classAssistClassLoad));
+        classPool.appendClassPath(new LoaderClassPath(classLoader));
         ClassReplaceHandler classReplaceHandler = new ClassReplaceHandler();
         String currentClassName = "";
 
         List<String> allPath = new ArrayList<>();
-        try {
 
-            ServiceLoader loader = ServiceLoader.load(ScanPath.class);
-            for (Object o : loader) {
+
+        ServiceLoader loader = ServiceLoader.load(ScanPath.class);
+        for (Object o : loader) {
+
+            try {
                 if (o instanceof ScanPath) {
                     ScanPath scanPath = (ScanPath) o;
                     allPath.addAll(scanPath.getScanPath());
                 }
+            } catch (Exception e) {
+                System.err.println("class-assist  ===  getScanPath error . " + " scanPathClass:" + o.getClass().getName() + ", error: " + e.getMessage());
             }
-
-        } catch (Exception e) {
-            System.err.println("class-assist  ===  getScanPath error . " + e.getMessage());
-            return;
         }
+
+
         if (allPath.isEmpty()) {
             System.out.println("class-assist  ===  not found scanPath , end of run");
             return;
@@ -72,7 +74,7 @@ public class ClassAssistApplicationContextInitializer implements ApplicationCont
                     CtClass ctClass = classPool.getCtClass(className);
                     final IClassPatch classPatch = (IClassPatch) class1.newInstance();
                     classReplaceHandler.handler(classPool, classPatch, ctClass);
-                    ctClass.toClass(classAssistClassLoad, ctClass.getClass().getProtectionDomain());
+                    ctClass.toClass(classLoader, ctClass.getClass().getProtectionDomain());
                     ctClass.detach();
                 } catch (NotFoundException notFoundException) {
                     System.err.println("class-assist  ===  " + currentClassName + " not found , make sure class is exist.");
