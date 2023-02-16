@@ -1,6 +1,6 @@
 # classassist
 
-一款帮助修改第三方包中class的工具,不需要agent,不需要添加启动只需添加一个注解和实现一个接口即可,降低用户对 javassist 的使用成本
+一款帮助修改第三方包中class的工具,不需要agent,不需要添加启动参数, 只需添加一个注解和实现一个接口即可,降低用户对 javassist 的使用成本
 
 项目起源 : mybatis-plus 3.4.+ 版本中 sqlserver分页查询必须带上 order by 条件
 
