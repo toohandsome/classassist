@@ -11,14 +11,14 @@ import java.util.regex.Pattern;
 public class JavaFormat {
 
 
-    public static void main(String[] args) {
-        String str = "/*** @说明 ： 可任意添加方法，类，引入包路径*/public class Test {    /**    * @说明 ：输出结果    */    public static void main(String[] args) {        System.out.println(\"hello world\");    }}";
-        str = formJava(str);
-        System.out.println(str);
-    }
+//    public static void main(String[] args) {
+//        String str = "/*** @说明 ： 可任意添加方法，类，引入包路径*/public class Test {    /**    * @说明 ：输出结果    */    public static void main(String[] args) {        System.out.println(\"hello world\");    }}";
+//        str = formJava(str);
+//        System.out.println(str);
+//    }
 
 
-    public static String formJava(String data) {
+    public static String formatJava(String data) {
         String dataTmp = replaceStrToUUid(data, "\"");
         dataTmp = replaceStrToUUid(dataTmp, "'");
         dataTmp = repalceHHF(dataTmp, "\n", "");

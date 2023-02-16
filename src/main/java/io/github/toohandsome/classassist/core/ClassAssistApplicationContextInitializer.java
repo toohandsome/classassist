@@ -1,9 +1,11 @@
 package io.github.toohandsome.classassist.core;
 
 //import cn.hutool.core.util.ClassUtil;
+
 import io.github.toohandsome.classassist.annotation.ClassAssist;
 import io.github.toohandsome.classassist.spi.ScanPath;
 import io.github.toohandsome.classassist.util.ClassUtil;
+import io.github.toohandsome.classassist.util.ConfigUtil;
 import io.github.toohandsome.classassist.util.StringUtil;
 import javassist.*;
 import org.springframework.boot.SpringApplication;
@@ -27,11 +29,24 @@ public class ClassAssistApplicationContextInitializer implements ApplicationCont
 
 
     public ClassAssistApplicationContextInitializer() {
-
         if (!isFirst) {
             return;
         }
         isFirst = false;
+
+        final List enableList = ConfigUtil.getConfig("enable");
+        if (!enableList.isEmpty()) {
+            final String enableStr = enableList.get(0) + "";
+            try {
+                final boolean aBoolean = Boolean.getBoolean(enableStr);
+                if (!aBoolean) {
+                    System.out.println("class-assist  ===  disabled!");
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         final ClassLoader classLoader = this.getClass().getClassLoader();
 //        ClassAssistClassLoad classAssistClassLoad = new ClassAssistClassLoad(String.class.getClassLoader());
@@ -66,31 +81,38 @@ public class ClassAssistApplicationContextInitializer implements ApplicationCont
             return;
         }
 
-        for (String scanPath : allPath) {
-            List<Class<?>> classSet = ClassUtil.getClassListByAnnotation(scanPath, ClassAssist.class);
-            for (Class<?> class1 : classSet) {
-                try {
-                    final ClassAssist annotation = class1.getAnnotation(ClassAssist.class);
-                    final String className = annotation.className();
-                    System.out.println("class-assist  ===  found class " + class1.getTypeName());
-                    currentClassName = class1.getTypeName();
-                    CtClass ctClass = classPool.getCtClass(className);
-                    final IClassPatch classPatch = (IClassPatch) class1.newInstance();
-                    classReplaceHandler.handler(classPool, classPatch, ctClass);
-                    ctClass.toClass(classLoader, ctClass.getClass().getProtectionDomain());
-                    ctClass.detach();
-                } catch (NotFoundException notFoundException) {
-                    System.err.println("class-assist  ===  " + currentClassName + " not found , make sure class is exist.");
-                } catch (InstantiationException instantiationException) {
-                    System.err.println("class-assist  ===  " + currentClassName + " instantiationException . " + instantiationException.getMessage());
-                } catch (IllegalAccessException illegalAccessException) {
-                    System.err.println("class-assist  ===  " + currentClassName + " illegalAccessException . " + illegalAccessException.getMessage());
-                } catch (CannotCompileException cannotCompileException) {
-                    System.err.println("class-assist  ===  " + currentClassName + " cannotCompileException . " + cannotCompileException.getMessage());
+        for (int i = 0; i < allPath.size(); i++) {
+            String scanPath = allPath.get(i);
+            try {
+                List<Class<?>> classSet = ClassUtil.getClassListByAnnotation(scanPath, ClassAssist.class);
+                for (Class<?> class1 : classSet) {
+
+                    try {
+                        final ClassAssist annotation = class1.getAnnotation(ClassAssist.class);
+                        final String className = annotation.className();
+                        System.out.println("class-assist  ===  found class " + class1.getTypeName());
+                        currentClassName = class1.getTypeName();
+                        CtClass ctClass = classPool.getCtClass(className);
+                        final IClassPatch classPatch = (IClassPatch) class1.newInstance();
+                        classReplaceHandler.handler(classPool, classPatch, ctClass);
+                        ctClass.toClass(classLoader, ctClass.getClass().getProtectionDomain());
+                        ctClass.detach();
+                    } catch (NotFoundException notFoundException) {
+                        System.err.println("class-assist  ===  " + currentClassName + " not found , make sure class is exist.");
+                    } catch (InstantiationException instantiationException) {
+                        System.err.println("class-assist  ===  " + currentClassName + " instantiationException . " + instantiationException.getMessage());
+                    } catch (IllegalAccessException illegalAccessException) {
+                        System.err.println("class-assist  ===  " + currentClassName + " illegalAccessException . " + illegalAccessException.getMessage());
+                    } catch (CannotCompileException cannotCompileException) {
+                        System.err.println("class-assist  ===  " + currentClassName + " cannotCompileException . " + cannotCompileException.getMessage());
+                    } catch (Exception e) {
+                        System.err.println("class-assist  ===  " + currentClassName + " cannotCompileException . " + e.getMessage());
+                    }
                 }
+            } catch (Exception exception) {
+                System.err.println("class-assist  ===  " + currentClassName + " getClassListByAnnotationException . " + exception.getMessage());
             }
         }
-
 
         System.out.println(Thread.currentThread().getName() + "  ===  " + Thread.currentThread().getContextClassLoader() + " ===   class-assist run success!");
     }

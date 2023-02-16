@@ -36,12 +36,17 @@ class ClassReplaceHandler {
 
             // 修改方法
             final ArrayList<MethodMeta> editMethodList = classPatch.getEditMethodList();
-            editMethod(classPool, ctClass, editMethodList);
+            editMethod(classPool, ctClass, editMethodList, false);
+
+            // 修改构造方法
+            final ArrayList<MethodMeta> constructorsMethodList = classPatch.getConstructorsMethodList();
+            editMethod(classPool, ctClass, constructorsMethodList, true);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private void addFiled(CtClass ctClass, List<String> addFieldList) throws CannotCompileException {
         if (addFieldList != null && !addFieldList.isEmpty()) {
@@ -69,7 +74,7 @@ class ClassReplaceHandler {
                 final CtClass ctClass1 = classPool.getCtClass(returnType.getTypeName());
                 CtMethod ctMethod = new CtMethod(ctClass1, name, params, ctClass);
                 ctClass.addMethod(ctMethod);
-                String bodyStr = JavaFormat.formJava(body);
+                String bodyStr = JavaFormat.formatJava(body);
                 System.out.println("class-assist  ===  " + "methodName: " + name + "\t,addMethodBodyStr : \r\n" + bodyStr);
                 ctMethod.setBody(bodyStr);
                 ctMethod.setModifiers(Modifier.PUBLIC);
@@ -78,7 +83,7 @@ class ClassReplaceHandler {
         }
     }
 
-    private void editMethod(ClassPool classPool, CtClass ctClass, ArrayList<MethodMeta> editMethodList) throws NotFoundException, CannotCompileException {
+    private void editMethod(ClassPool classPool, CtClass ctClass, ArrayList<MethodMeta> editMethodList, boolean isConstructor) throws NotFoundException, CannotCompileException {
         if (editMethodList != null && !editMethodList.isEmpty()) {
             for (MethodMeta methodMeta : editMethodList) {
                 final LinkedHashMap<String, Class> paramsType = methodMeta.getParams();
@@ -91,20 +96,26 @@ class ClassReplaceHandler {
                 for (int i = 0; i < size; i++) {
                     body = replaceMethodBody(classPool, paramsType, body, params, paramsNameArr, i);
                 }
-                CtMethod method = ctClass.getDeclaredMethod(name, params);
-                String bodyStr = JavaFormat.formJava(body);
+                body = body.replaceAll("\\sthis\\.", " $0\\.");
 
+                String bodyStr = JavaFormat.formatJava(body);
+                CtBehavior ctBehavior = null;
+                if (isConstructor) {
+                    ctBehavior = ctClass.getDeclaredConstructor(params);
+                } else {
+                    ctBehavior = ctClass.getDeclaredMethod(name, params);
+                }
                 if (StringUtils.hasText(methodMeta.getBody())) {
-                    method.setBody(bodyStr);
+                    ctBehavior.setBody(bodyStr);
                     System.out.println("class-assist  ===  " + "methodName: " + name + "\t,editMethodBodyStr: \r\n" + bodyStr);
                 }
                 if (StringUtils.hasText(methodMeta.getInsertBefore())) {
                     System.out.println("class-assist  ===  " + "methodName: " + name + "\t,insertBefore: \r\n" + methodMeta.getInsertBefore());
-                    method.insertBefore(methodMeta.getInsertBefore());
+                    ctBehavior.insertBefore(methodMeta.getInsertBefore());
                 }
                 if (StringUtils.hasText(methodMeta.getInsertAfter())) {
                     System.out.println("class-assist  ===  " + "methodName: " + name + "\t,insertAfter: \r\n" + methodMeta.getInsertAfter());
-                    method.insertAfter(methodMeta.getInsertAfter());
+                    ctBehavior.insertAfter(methodMeta.getInsertAfter());
                 }
             }
         }

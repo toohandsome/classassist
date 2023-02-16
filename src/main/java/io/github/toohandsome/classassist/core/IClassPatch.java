@@ -18,16 +18,28 @@ public interface IClassPatch {
      * 返回 需要新增的方法
      *
      */
-    ArrayList<MethodMeta> getAddMethodList();
+    default ArrayList<MethodMeta> getAddMethodList(){
+        return new ArrayList<>();
+    }
 
     /**
      * 返回需要新增的字段
      *
      */
-    List<String> getAddFieldList();
-
+    default List<String> getAddFieldList(){
+        return new ArrayList<>();
+    }
     /**
      * 返回需要导入的包
      */
-    List<String> getImprotPackages();
+    default List<String> getImprotPackages(){
+        return new ArrayList<>();
+    }
+
+    /**
+     * 返回需要修改的构造方法
+     */
+    default ArrayList<MethodMeta> getConstructorsMethodList(){
+        return new ArrayList<>();
+    }
 }
