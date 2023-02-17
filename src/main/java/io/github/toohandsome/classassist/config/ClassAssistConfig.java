@@ -10,5 +10,5 @@ import org.springframework.context.annotation.Configuration;
 //@ComponentScan(value = "com.yxd.classassist")
 public class ClassAssistConfig {
 
-
+    public static boolean log = false;
 }

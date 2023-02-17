@@ -1,6 +1,8 @@
 package io.github.toohandsome.classassist.core;
 
+import io.github.toohandsome.classassist.config.ClassAssistConfig;
 import io.github.toohandsome.classassist.util.JavaFormat;
+import io.github.toohandsome.classassist.util.LogUtil;
 import javassist.*;
 import org.springframework.util.StringUtils;
 
@@ -75,7 +77,7 @@ class ClassReplaceHandler {
                 CtMethod ctMethod = new CtMethod(ctClass1, name, params, ctClass);
                 ctClass.addMethod(ctMethod);
                 String bodyStr = JavaFormat.formatJava(body);
-                System.out.println("class-assist  ===  " + "methodName: " + name + "\t,addMethodBodyStr : \r\n" + bodyStr);
+                LogUtil.info("class-assist  ===  " + "methodName: " + name + "\t,addMethodBodyStr : \r\n" + bodyStr);
                 ctMethod.setBody(bodyStr);
                 ctMethod.setModifiers(Modifier.PUBLIC);
                 ctClass.setModifiers(ctClass.getModifiers() & ~Modifier.ABSTRACT);
@@ -108,14 +110,14 @@ class ClassReplaceHandler {
                     }
                     if (StringUtils.hasText(methodMeta.getBody())) {
                         ctBehavior.setBody(bodyStr);
-                        System.out.println("class-assist  ===  " + "methodName: " + name + "\t,editMethodBodyStr: \r\n" + bodyStr);
+                        LogUtil.info("class-assist  ===  " + "methodName: " + name + "\t,editMethodBodyStr: \r\n" + bodyStr);
                     }
                     if (StringUtils.hasText(methodMeta.getInsertBefore())) {
-                        System.out.println("class-assist  ===  " + "methodName: " + name + "\t,insertBefore: \r\n" + methodMeta.getInsertBefore());
+                        LogUtil.info("class-assist  ===  " + "methodName: " + name + "\t,insertBefore: \r\n" + methodMeta.getInsertBefore());
                         ctBehavior.insertBefore(methodMeta.getInsertBefore());
                     }
                     if (StringUtils.hasText(methodMeta.getInsertAfter())) {
-                        System.out.println("class-assist  ===  " + "methodName: " + name + "\t,insertAfter: \r\n" + methodMeta.getInsertAfter());
+                        LogUtil.info("class-assist  ===  " + "methodName: " + name + "\t,insertAfter: \r\n" + methodMeta.getInsertAfter());
                         ctBehavior.insertAfter(methodMeta.getInsertAfter());
                     }
                 } catch (Exception e) {

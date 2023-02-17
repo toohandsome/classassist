@@ -18,7 +18,7 @@ github上查询后得知需带上 order by 条件, 但是公司现有业务系�
 <dependency>
     <groupId>io.github.toohandsome</groupId>
     <artifactId>class-assist</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
 </dependency>
 ```
 
@@ -27,7 +27,12 @@ github上查询后得知需带上 order by 条件, 但是公司现有业务系�
 ### properties 配置
 
 ```
+# 控制扫描包
 class-assist.scan = com.xxx.xxx
+# 控制是否开启功能
+class-assist.enable = true
+# 控制日志打印
+class-assist.log = true
 ```
 
 ### yml/yaml 配置

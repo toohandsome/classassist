@@ -3,9 +3,11 @@ package io.github.toohandsome.classassist.core;
 //import cn.hutool.core.util.ClassUtil;
 
 import io.github.toohandsome.classassist.annotation.ClassAssist;
+import io.github.toohandsome.classassist.config.ClassAssistConfig;
 import io.github.toohandsome.classassist.spi.ScanPath;
 import io.github.toohandsome.classassist.util.ClassUtil;
 import io.github.toohandsome.classassist.util.ConfigUtil;
+import io.github.toohandsome.classassist.util.LogUtil;
 import io.github.toohandsome.classassist.util.StringUtil;
 import javassist.*;
 import org.springframework.boot.SpringApplication;
@@ -38,10 +40,23 @@ public class ClassAssistApplicationContextInitializer implements ApplicationCont
         if (!enableList.isEmpty()) {
             final String enableStr = enableList.get(0) + "";
             try {
-                final boolean aBoolean = Boolean.getBoolean(enableStr);
+                final boolean aBoolean = Boolean.valueOf(enableStr);
                 if (!aBoolean) {
                     System.out.println("class-assist  ===  disabled!");
                     return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        final List logList = ConfigUtil.getConfig("log");
+        if (!logList.isEmpty()) {
+            final String enableStr = logList.get(0) + "";
+            try {
+                final boolean aBoolean = Boolean.valueOf(enableStr);
+                if (aBoolean) {
+                    ClassAssistConfig.log = true;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -90,7 +105,7 @@ public class ClassAssistApplicationContextInitializer implements ApplicationCont
                     try {
                         final ClassAssist annotation = class1.getAnnotation(ClassAssist.class);
                         final String className = annotation.className();
-                        System.out.println("class-assist  ===  found class " + class1.getTypeName());
+                        LogUtil.info("class-assist  ===  found class " + class1.getTypeName());
                         currentClassName = class1.getTypeName();
                         CtClass ctClass = classPool.getCtClass(className);
                         final IClassPatch classPatch = (IClassPatch) class1.newInstance();

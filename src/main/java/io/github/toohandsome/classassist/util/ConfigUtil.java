@@ -1,5 +1,6 @@
 package io.github.toohandsome.classassist.util;
 
+import io.github.toohandsome.classassist.config.ClassAssistConfig;
 import io.github.toohandsome.classassist.core.ClassAssistApplicationContextInitializer;
 import org.yaml.snakeyaml.Yaml;
 
@@ -54,7 +55,7 @@ public class ConfigUtil {
 
                 }
                 if (StringUtil.isNotEmpty(scanPath)) {
-                    System.out.println("class-assist  ===  " + propName + ": " + scanPath);
+                    LogUtil.info("class-assist  ===  " + propName + ": " + scanPath);
                     findit = true;
                     break;
                 }
@@ -64,7 +65,7 @@ public class ConfigUtil {
             }
         }
         if (!findit) {
-            System.err.println("class-assist  ===   can't find prop: " + propName);
+            LogUtil.error("class-assist  ===   can't find prop: " + propName);
             return new ArrayList<>();
         }
         return Arrays.asList(scanPath.split(","));
