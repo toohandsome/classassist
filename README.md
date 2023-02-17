@@ -18,7 +18,7 @@ github上查询后得知需带上 order by 条件, 但是公司现有业务系�
 <dependency>
     <groupId>io.github.toohandsome</groupId>
     <artifactId>class-assist</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 </dependency>
 ```
 
@@ -81,6 +81,18 @@ IClassPatch 中目前有四个需要重写的方法，后期会增加，以支�
  * @return
  */
 ArrayList<MethodMeta> getEditMethodList();
+
+```
+
+#### getConstructorsMethodList
+
+```
+/**
+ * 返回 需要修改的构造方法
+ *
+ * @return
+ */
+ArrayList<MethodMeta> getConstructorsMethodList();
 
 ```
 
