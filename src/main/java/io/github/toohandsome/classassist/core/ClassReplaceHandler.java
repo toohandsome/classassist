@@ -86,37 +86,42 @@ class ClassReplaceHandler {
     private void editMethod(ClassPool classPool, CtClass ctClass, ArrayList<MethodMeta> editMethodList, boolean isConstructor) throws NotFoundException, CannotCompileException {
         if (editMethodList != null && !editMethodList.isEmpty()) {
             for (MethodMeta methodMeta : editMethodList) {
-                final LinkedHashMap<String, Class> paramsType = methodMeta.getParams();
-                String body = "{" + methodMeta.getBody() + "}";
-                final String name = methodMeta.getName();
-                final int size = paramsType.size();
-                CtClass[] params = new CtClass[size];
-                final Set<String> paramsNameSet = paramsType.keySet();
-                final Object[] paramsNameArr = paramsNameSet.toArray();
-                for (int i = 0; i < size; i++) {
-                    body = replaceMethodBody(classPool, paramsType, body, params, paramsNameArr, i);
-                }
-                body = body.replaceAll("\\sthis\\.", " $0\\.");
+                try {
+                    final LinkedHashMap<String, Class> paramsType = methodMeta.getParams();
+                    String body = "{" + methodMeta.getBody() + "}";
+                    final String name = methodMeta.getName();
+                    final int size = paramsType.size();
+                    CtClass[] params = new CtClass[size];
+                    final Set<String> paramsNameSet = paramsType.keySet();
+                    final Object[] paramsNameArr = paramsNameSet.toArray();
+                    for (int i = 0; i < size; i++) {
+                        body = replaceMethodBody(classPool, paramsType, body, params, paramsNameArr, i);
+                    }
+                    body = body.replaceAll("\\sthis\\.", " \\$0");
 
-                String bodyStr = JavaFormat.formatJava(body);
-                CtBehavior ctBehavior = null;
-                if (isConstructor) {
-                    ctBehavior = ctClass.getDeclaredConstructor(params);
-                } else {
-                    ctBehavior = ctClass.getDeclaredMethod(name, params);
+                    String bodyStr = JavaFormat.formatJava(body);
+                    CtBehavior ctBehavior = null;
+                    if (isConstructor) {
+                        ctBehavior = ctClass.getDeclaredConstructor(params);
+                    } else {
+                        ctBehavior = ctClass.getDeclaredMethod(name, params);
+                    }
+                    if (StringUtils.hasText(methodMeta.getBody())) {
+                        ctBehavior.setBody(bodyStr);
+                        System.out.println("class-assist  ===  " + "methodName: " + name + "\t,editMethodBodyStr: \r\n" + bodyStr);
+                    }
+                    if (StringUtils.hasText(methodMeta.getInsertBefore())) {
+                        System.out.println("class-assist  ===  " + "methodName: " + name + "\t,insertBefore: \r\n" + methodMeta.getInsertBefore());
+                        ctBehavior.insertBefore(methodMeta.getInsertBefore());
+                    }
+                    if (StringUtils.hasText(methodMeta.getInsertAfter())) {
+                        System.out.println("class-assist  ===  " + "methodName: " + name + "\t,insertAfter: \r\n" + methodMeta.getInsertAfter());
+                        ctBehavior.insertAfter(methodMeta.getInsertAfter());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                if (StringUtils.hasText(methodMeta.getBody())) {
-                    ctBehavior.setBody(bodyStr);
-                    System.out.println("class-assist  ===  " + "methodName: " + name + "\t,editMethodBodyStr: \r\n" + bodyStr);
-                }
-                if (StringUtils.hasText(methodMeta.getInsertBefore())) {
-                    System.out.println("class-assist  ===  " + "methodName: " + name + "\t,insertBefore: \r\n" + methodMeta.getInsertBefore());
-                    ctBehavior.insertBefore(methodMeta.getInsertBefore());
-                }
-                if (StringUtils.hasText(methodMeta.getInsertAfter())) {
-                    System.out.println("class-assist  ===  " + "methodName: " + name + "\t,insertAfter: \r\n" + methodMeta.getInsertAfter());
-                    ctBehavior.insertAfter(methodMeta.getInsertAfter());
-                }
+
             }
         }
     }
