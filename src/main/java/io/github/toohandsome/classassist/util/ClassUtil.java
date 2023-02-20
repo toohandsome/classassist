@@ -57,7 +57,7 @@ public class ClassUtil {
                 if (url != null) {
                     String protocol = url.getProtocol();
                     if (protocol.equals("file")) {
-                        String packagePath = java.net.URLDecoder.decode(url.getPath(),"utf-8");
+                        String packagePath = java.net.URLDecoder.decode(url.getPath(), "utf-8");
                         addClassByAnnotation(classList, packagePath, packageName, annotationClass);
                     } else if (protocol.equals("jar")) {
                         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
@@ -69,9 +69,14 @@ public class ClassUtil {
                             if (jarEntryName.endsWith(".class")) {
                                 String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
                                 Class<?> cls = Class.forName(className);
-                                if (cls.isAnnotationPresent(annotationClass)) {
-                                    classList.add(cls);
+                                try {
+                                    if (cls.isAnnotationPresent(annotationClass)) {
+                                        classList.add(cls);
+                                    }
+                                } catch (Exception e) {
+                                    LogUtil.error(e.getMessage());
                                 }
+
                             }
                         }
                     }

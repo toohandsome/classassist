@@ -18,7 +18,7 @@ github上查询后得知需带上 order by 条件, 但是公司现有业务系�
 <dependency>
     <groupId>io.github.toohandsome</groupId>
     <artifactId>class-assist</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 </dependency>
 ```
 
