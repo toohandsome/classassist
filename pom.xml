@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.toohandsome</groupId>
     <artifactId>class-assist</artifactId>
-    <version>1.0.8</version>
+    <version>1.1.0</version>
     <name>class-assist</name>
     <description>一款帮助修改第三方包中class的工具,不需要agent,不需要添加启动只需添加一个注解和实现一个接口即可,降低用户对 javassist 的使用成本</description>
     <url>https://github.com/toohandsome/classassist</url>

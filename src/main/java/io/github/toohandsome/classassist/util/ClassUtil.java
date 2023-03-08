@@ -34,14 +34,20 @@ public class ClassUtil {
                             if (jarEntryName.endsWith(".class")) {
                                 String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
                                 if (isRecursive || className.substring(0, className.lastIndexOf(".")).equals(packageName)) {
-                                    classList.add(Class.forName(className));
+                                    try {
+                                        final Class<?> e = Class.forName(className);
+                                        classList.add(e);
+                                    } catch (Throwable e1) {
+                                        LogUtil.error(e1.getMessage());
+                                    }
+
                                 }
                             }
                         }
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return classList;
@@ -68,12 +74,12 @@ public class ClassUtil {
                             String jarEntryName = jarEntry.getName();
                             if (jarEntryName.endsWith(".class")) {
                                 String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
-                                Class<?> cls = Class.forName(className);
                                 try {
+                                    Class<?> cls = Class.forName(className);
                                     if (cls.isAnnotationPresent(annotationClass)) {
                                         classList.add(cls);
                                     }
-                                } catch (Exception e) {
+                                } catch (Throwable e) {
                                     LogUtil.error(e.getMessage());
                                 }
 
@@ -82,7 +88,7 @@ public class ClassUtil {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return classList;
