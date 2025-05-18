@@ -18,35 +18,41 @@ class ClassReplaceHandler {
 
     String replaceReg = "([\\.|\\s|\\|;|,)])";
 
-    void handler(ClassPool classPool, IClassPatch classPatch, CtClass ctClass) {
-        try {
-            // 导包
-            final List<String> improtPackages = classPatch.getImprotPackages();
-            if (improtPackages != null && !improtPackages.isEmpty()) {
-                for (String improtPackage : improtPackages) {
-                    classPool.importPackage(improtPackage);
-                }
-            }
+    void handler(ClassLoader classLoader, ClassPool classPool, IClassPatch classPatch, CtClass ctClass) throws CannotCompileException, NotFoundException {
 
-            // 加字段
-            final List<String> addFieldList = classPatch.getAddFieldList();
-            addFiled(ctClass, addFieldList);
 
-            // 加方法
-            final ArrayList<MethodMeta> addMethodList = classPatch.getAddMethodList();
-            addMethod(classPool, ctClass, addMethodList);
-
-            // 修改方法
-            final ArrayList<MethodMeta> editMethodList = classPatch.getEditMethodList();
-            editMethod(classPool, ctClass, editMethodList, false);
-
-            // 修改构造方法
-            final ArrayList<MethodMeta> constructorsMethodList = classPatch.getConstructorsMethodList();
-            editMethod(classPool, ctClass, constructorsMethodList, true);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        // 不满足条件 不处理
+        if (!classPatch.condition()) {
+            return;
         }
+
+        // 导包
+        final List<String> importPackages = classPatch.getImprotPackages();
+        if (importPackages != null && !importPackages.isEmpty()) {
+            for (String importPackage : importPackages) {
+                classPool.importPackage(importPackage);
+            }
+        }
+
+        // 加字段
+        final List<String> addFieldList = classPatch.getAddFieldList();
+        addFiled(ctClass, addFieldList);
+
+        // 加方法
+        final ArrayList<MethodMeta> addMethodList = classPatch.getAddMethodList();
+        addMethod(classPool, ctClass, addMethodList);
+
+        // 修改方法
+        final ArrayList<MethodMeta> editMethodList = classPatch.getEditMethodList();
+        editMethod(classPool, ctClass, editMethodList, false);
+
+        // 修改构造方法
+        final ArrayList<MethodMeta> constructorsMethodList = classPatch.getConstructorsMethodList();
+        editMethod(classPool, ctClass, constructorsMethodList, true);
+
+        ctClass.toClass(classLoader, ctClass.getClass().getProtectionDomain());
+        ctClass.detach();
+
     }
 
 

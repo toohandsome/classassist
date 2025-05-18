@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface ClassAssist {
 
+    String className() default "";
 
-	String className() default "";
-
+    boolean useEnv() default false;
 }

@@ -1,2 +1,5 @@
 org.springframework.context.ApplicationContextInitializer=\
   io.github.toohandsome.classassist.core.ClassAssistApplicationContextInitializer
+
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  io.github.toohandsome.classassist.core.ClassAssistEnvPostProcessor
